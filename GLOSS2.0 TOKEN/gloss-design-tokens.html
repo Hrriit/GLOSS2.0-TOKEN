@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLOSS Vault Design System 2.0 — Tokens</title>
+<style>
+:root {
+  --sidebar-w: 240px;
+  --topbar-h: 52px;
+  --bg: #f7f8f9;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --text-1: #172b4d;
+  --text-2: #44526a;
+  --text-3: #8590a2;
+  --border: #e8eaed;
+  --border-light: #f1f3f5;
+  --accent: #00c4c4;
+  --accent-dark: #007b7c;
+  --accent-bg: #e8fafb;
+  --nav-hover: #f1f3f5;
+  --nav-active-bg: #e5f0ff;
+  --nav-active-text: #0052cc;
+  --tab-active-bg: #ebecf7;
+  --tab-active-text: #3f4692;
+  --radius: 8px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:var(--bg); color:var(--text-1); line-height:1.5; -webkit-font-smoothing:antialiased; display:flex; min-height:100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  height: 100vh;
+  position: fixed;
+  top: 0; left: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-brand {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: var(--topbar-h);
+  flex-shrink: 0;
+}
+.brand-dot {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 13px; letter-spacing: -0.5px;
+}
+.brand-name { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+.brand-ver { font-size: 10px; color: var(--text-3); font-weight: 500; }
+.sidebar-body { flex: 1; overflow-y: auto; padding: 12px 8px; }
+.sidebar-group { margin-bottom: 20px; }
+.sidebar-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 12px;
+  margin-bottom: 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: background 0.1s, color 0.1s;
+  user-select: none;
+}
+.nav-item:hover { background: var(--nav-hover); color: var(--text-1); }
+.nav-item.active { background: var(--nav-active-bg); color: var(--nav-active-text); font-weight: 600; }
+.nav-item .nav-count { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text-3); background: var(--border-light); border-radius: 10px; padding: 1px 7px; }
+
+/* mode toggle at bottom */
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.mode-toggle { display: flex; background: var(--border-light); border-radius: 6px; padding: 2px; gap: 2px; }
+.mode-toggle button {
+  flex: 1; padding: 5px; border: none; background: none; border-radius: 4px;
+  font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-3); transition: all 0.15s;
+}
+.mode-toggle button.active { background: var(--bg-card); color: var(--text-1); box-shadow: var(--shadow-sm); }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── TAB BAR ── */
+.tabbar {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: sticky;
+  top: 0; z-index: 50;
+  height: var(--topbar-h);
+}
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border: none;
+  background: none;
+  border-radius: 20px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tab-btn:hover { background: var(--nav-hover); color: var(--text-1); }
+.tab-btn.active { background: var(--tab-active-bg); color: var(--tab-active-text); font-weight: 600; }
+
+/* ── CONTENT ── */
+.content { flex: 1; padding: 32px; max-width: 1100px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── PAGE TITLE ── */
+.page-header { margin-bottom: 28px; }
+.page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+.page-header p { font-size: 14px; color: var(--text-2); max-width: 600px; }
+
+/* ── CARDS / TABLES ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-light);
+}
+.card-header h3 { font-size: 14px; font-weight: 700; }
+.card-header small { font-size: 12px; color: var(--text-3); }
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 28px 0 12px;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* ── ARCH DIAGRAM ── */
+.arch-grid { display: grid; grid-template-columns: 1fr 32px 1fr 32px 1fr; align-items: center; gap: 0; margin-bottom: 32px; }
+.arch-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-sm); }
+.arch-card.l1 { border-top: 3px solid #b9bbc6; }
+.arch-card.l2 { border-top: 3px solid var(--accent); }
+.arch-card.l3 { border-top: 3px solid #5472e4; }
+.arch-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.arch-card p { font-size: 12px; color: var(--text-2); margin-bottom: 10px; }
+.code-pill { background: var(--border-light); border-radius: 5px; padding: 7px 10px; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: var(--text-2); }
+.arch-arrow { text-align: center; color: var(--text-3); font-size: 18px; }
+
+/* ── COLOR SWATCHES ── */
+.color-palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.color-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.color-group-title { padding: 12px 16px; font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; }
+.color-group-title small { font-weight: 400; color: var(--text-3); font-size: 12px; }
+.color-row {
+  display: grid; grid-template-columns: 36px 1fr auto;
+  align-items: center; gap: 10px;
+  padding: 5px 16px 5px 10px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer; transition: background 0.1s; font-size: 12px;
+}
+.color-row:last-child { border-bottom: none; }
+.color-row:hover { background: var(--bg); }
+.swatch { width: 28px; height: 28px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.07); flex-shrink: 0; }
+.color-step { font-weight: 600; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: var(--text-2); }
+.color-hex { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: var(--text-3); text-align: right; }
+
+/* ── TOKEN TABLE ── */
+.token-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.token-table thead { background: var(--border-light); }
+.token-table th { padding: 9px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); border-bottom: 1px solid var(--border); }
+.token-table td { padding: 7px 16px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+.token-table tr:last-child td { border-bottom: none; }
+.token-table tr { cursor: pointer; transition: background 0.08s; }
+.token-table tr:hover td { background: rgba(0,100,200,0.025); }
+.mini-sw { display: inline-block; width: 16px; height: 16px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.07); vertical-align: middle; margin-right: 7px; }
+.mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; }
+.text-muted { color: var(--text-3); }
+.css-var { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: #0052cc; }
+.ref-alias { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: var(--text-3); }
+.badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+.badge-aaa { background: #e3fcef; color: #006644; }
+.badge-aa  { background: #fffae6; color: #974f0c; }
+.badge-fail{ background: #ffebe6; color: #bf2600; }
+.tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; background: var(--border-light); color: var(--text-3); }
+
+/* ── SCALE ── */
+.scale-list { display: grid; gap: 6px; }
+.scale-row { display: grid; grid-template-columns: 100px 1fr 60px; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 8px 16px; cursor: pointer; transition: border-color 0.1s; }
+.scale-row:hover { border-color: var(--accent); }
+.scale-row .scale-name { font-weight: 700; font-size: 13px; font-family: 'SF Mono','Fira Code',monospace; }
+.scale-track { height: 6px; background: var(--accent); opacity: 0.5; border-radius: 3px; }
+.scale-px { font-size: 12px; color: var(--text-3); text-align: right; font-family: 'SF Mono',monospace; }
+
+/* ── TYPE PREVIEW ── */
+.type-rows { display: grid; gap: 0; }
+.type-row { display: grid; grid-template-columns: 120px 90px 1fr; align-items: center; gap: 16px; padding: 10px 20px; border-bottom: 1px solid var(--border-light); background: var(--bg-card); }
+.type-row:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+.type-row:last-child { border-bottom: none; border-radius: 0 0 var(--radius) var(--radius); }
+.type-row:hover { background: var(--bg); }
+.type-token { font-family: 'SF Mono',monospace; font-size: 11px; color: var(--text-3); }
+.type-meta { font-size: 12px; color: var(--text-2); }
+
+/* ── NAMING CONVENTION ── */
+.naming-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.naming-table th { padding: 9px 16px; background: var(--border-light); border-bottom: 1px solid var(--border); text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); }
+.naming-table td { padding: 9px 16px; border-bottom: 1px solid var(--border-light); }
+.naming-table tr:last-child td { border-bottom: none; }
+.naming-table code { background: var(--border-light); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; }
+
+/* ── RESP TABLE ── */
+.resp-diff { background: #fff7c2; border-radius: 3px; padding: 1px 5px; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(50px); background: #172b4d; color: #fff; padding: 9px 18px; border-radius: 6px; font-size: 12px; font-weight: 500; opacity: 0; transition: all 0.2s; z-index: 999; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar { transform: translateX(-100%); }
+  .main { margin-left: 0; }
+  .arch-grid { grid-template-columns: 1fr; }
+  .arch-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-dot">GV</div>
+    <div>
+      <div class="brand-name">GLOSS Vault</div>
+      <div class="brand-ver">Design System 2.0</div>
+    </div>
+  </div>
+
+  <div class="sidebar-body">
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Overview</div>
+      <div class="nav-item active" onclick="gotoPage('overview')">
+Overview
+      </div>
+      <div class="nav-item" onclick="gotoPage('naming')">
+        Naming Convention
+      </div>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Color</div>
+      <div class="nav-item" onclick="gotoPage('primitives')">
+Primitive Colors
+        <span class="nav-count">11</span>
+      </div>
+      <div class="nav-item" onclick="gotoPage('semantic')">
+        Semantic Colors
+        <span class="nav-count">9</span>
+      </div>
+      <div class="nav-item" onclick="gotoPage('mapping')">
+        Mapping Tokens
+        <span class="nav-count">81</span>
+      </div>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Foundation</div>
+      <div class="nav-item" onclick="gotoPage('spacing')">
+Spacing Scale
+      </div>
+      <div class="nav-item" onclick="gotoPage('typography')">
+        Typography
+      </div>
+      <div class="nav-item" onclick="gotoPage('responsive')">
+        Responsive
+      </div>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-label">Quality</div>
+      <div class="nav-item" onclick="gotoPage('accessibility')">
+        Accessibility
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="mode-toggle">
+      <button class="active" onclick="setMode('light')">Light</button>
+      <button onclick="setMode('dark')">Dark</button>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TAB BAR — rendered per page by JS -->
+  <div class="tabbar" id="tabbar"></div>
+
+  <!-- CONTENT AREA -->
+  <div class="content" id="content"></div>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+// ═══════════════════════════════════ DATA
+const mode = { v: 'light' };
+
+const primColors = {
+  CustomTeal:{"1":{l:"#f9fefe",d:"#091313"},"2":{l:"#f1fbfb",d:"#0f1c1b"},"3":{l:"#d9f9f8",d:"#082d2d"},"4":{l:"#c2f4f3",d:"#003a3b"},"5":{l:"#aaedeb",d:"#004848"},"6":{l:"#8fe1e0",d:"#065757"},"7":{l:"#69d2d1",d:"#116a69"},"8":{l:"#00bebe",d:"#108181"},"9":{l:"#00c4c4",d:"#00c4c4"},"10":{l:"#00b8b9",d:"#19b7b7"},"11":{l:"#008081",d:"#2cd2d2"},"12":{l:"#003f3f",d:"#b0eeed"}},
+  Indigo:{"1":{l:"#fdfdfe",d:"#11131f"},"2":{l:"#f7f9ff",d:"#141726"},"3":{l:"#edf2fe",d:"#182449"},"4":{l:"#e1e9ff",d:"#1d2e62"},"5":{l:"#d2deff",d:"#253974"},"6":{l:"#c1d0ff",d:"#304384"},"7":{l:"#abbdf9",d:"#3a4f97"},"8":{l:"#8da4ef",d:"#435db1"},"9":{l:"#3e63dd",d:"#3e63dd"},"10":{l:"#3358d4",d:"#5472e4"},"11":{l:"#3a5bc7",d:"#9eb1ff"},"12":{l:"#1f2d5c",d:"#d6e1ff"}},
+  Orange:{"1":{l:"#fefcfb",d:"#17120e"},"2":{l:"#fff7ed",d:"#1e160f"},"3":{l:"#ffefd6",d:"#331e0b"},"4":{l:"#ffdfb5",d:"#462100"},"5":{l:"#ffd19a",d:"#562800"},"6":{l:"#ffc182",d:"#66350c"},"7":{l:"#f5ae73",d:"#7e451d"},"8":{l:"#ec9455",d:"#a35829"},"9":{l:"#f76b15",d:"#f76b15"},"10":{l:"#ef5f00",d:"#ff801f"},"11":{l:"#cc4e00",d:"#ffa057"},"12":{l:"#582d1d",d:"#ffe0c2"}},
+  Slate:{"0":{l:"#ffffff",d:"#000000"},"1":{l:"#fcfcfd",d:"#111113"},"2":{l:"#f9f9fb",d:"#18191b"},"3":{l:"#f0f0f3",d:"#212225"},"4":{l:"#e8e8ec",d:"#272a2d"},"5":{l:"#e0e1e6",d:"#2e3135"},"6":{l:"#d9d9e0",d:"#363a3f"},"7":{l:"#cdced6",d:"#43484e"},"8":{l:"#b9bbc6",d:"#5a6169"},"9":{l:"#8b8d98",d:"#696e77"},"10":{l:"#80838d",d:"#777b84"},"11":{l:"#60646c",d:"#b0b4ba"},"12":{l:"#1c2024",d:"#edeef0"},"13":{l:"#000000",d:"#ffffff"}},
+  Amber:{"1":{l:"#fefdfb",d:"#16120c"},"2":{l:"#fefbe9",d:"#1d180f"},"3":{l:"#fff7c2",d:"#302008"},"4":{l:"#ffee9c",d:"#3f2700"},"5":{l:"#fbe577",d:"#4d3000"},"6":{l:"#f3d673",d:"#5c3d05"},"7":{l:"#e9c162",d:"#714f19"},"8":{l:"#e2a336",d:"#8f6424"},"9":{l:"#ffc53d",d:"#ffc53d"},"10":{l:"#ffba18",d:"#ffd60a"},"11":{l:"#ab6400",d:"#ffca16"},"12":{l:"#4f3422",d:"#ffe7b3"}},
+  Red:{"1":{l:"#fffcfc",d:"#191111"},"2":{l:"#fff7f7",d:"#201314"},"3":{l:"#feebec",d:"#3b1219"},"4":{l:"#ffdbdc",d:"#500f1c"},"5":{l:"#ffcdce",d:"#611623"},"6":{l:"#fdbdbe",d:"#72232d"},"7":{l:"#f4a9aa",d:"#8c333a"},"8":{l:"#eb8e90",d:"#b54548"},"9":{l:"#e5484d",d:"#e5484d"},"10":{l:"#dc3e42",d:"#ec5d5e"},"11":{l:"#ce2c31",d:"#ff9592"},"12":{l:"#641723",d:"#ffd1d9"}},
+  Blue:{"1":{l:"#fbfdff",d:"#0d1520"},"2":{l:"#f4faff",d:"#111927"},"3":{l:"#e6f4fe",d:"#0d2847"},"4":{l:"#d5efff",d:"#003362"},"5":{l:"#c2e5ff",d:"#004074"},"6":{l:"#acd8fc",d:"#104d87"},"7":{l:"#8ec8f6",d:"#205d9e"},"8":{l:"#5eb1ef",d:"#2870bd"},"9":{l:"#0090ff",d:"#0090ff"},"10":{l:"#0588f0",d:"#3b9eff"},"11":{l:"#0d74ce",d:"#70b8ff"},"12":{l:"#113264",d:"#c2e6ff"}},
+  Jade:{"1":{l:"#fbfefd",d:"#0d1512"},"2":{l:"#f4fbf7",d:"#121c18"},"3":{l:"#e6f7ed",d:"#0f2e22"},"4":{l:"#d6f1e3",d:"#0b3b2c"},"5":{l:"#c3e9d7",d:"#114837"},"6":{l:"#acdec8",d:"#1b5745"},"7":{l:"#8bceb6",d:"#246854"},"8":{l:"#56ba9f",d:"#2a7e68"},"9":{l:"#29a383",d:"#29a383"},"10":{l:"#26997b",d:"#27b08b"},"11":{l:"#208368",d:"#1fd8a4"},"12":{l:"#1d3b31",d:"#adf0d4"}},
+  BlackA:{"1":{l:"rgba(0,0,0,0.05)",d:"rgba(0,0,0,0.05)"},"2":{l:"rgba(0,0,0,0.1)",d:"rgba(0,0,0,0.1)"},"4":{l:"rgba(0,0,0,0.2)",d:"rgba(0,0,0,0.2)"},"6":{l:"rgba(0,0,0,0.4)",d:"rgba(0,0,0,0.4)"},"8":{l:"rgba(0,0,0,0.6)",d:"rgba(0,0,0,0.6)"}},
+  WhiteA:{"1":{l:"rgba(255,255,255,0.05)",d:"rgba(255,255,255,0.05)"},"2":{l:"rgba(255,255,255,0.1)",d:"rgba(255,255,255,0.1)"},"4":{l:"rgba(255,255,255,0.2)",d:"rgba(255,255,255,0.2)"},"6":{l:"rgba(255,255,255,0.4)",d:"rgba(255,255,255,0.4)"},"12":{l:"rgba(255,255,255,0.95)",d:"rgba(255,255,255,0.95)"}},
+  Grass:{"2":{l:"#f5fbf5",d:"#141a15"},"3":{l:"#e9f6e9",d:"#1b2a1e"},"7":{l:"#94ce9a",d:"#366740"},"10":{l:"#3e9b4f",d:"#53b365"},"11":{l:"#2a7e3b",d:"#71d083"},"12":{l:"#203c25",d:"#c2f0c2"}},
+  Tomato:{"2":{l:"#fff8f7",d:"#1f1513"},"3":{l:"#feebe7",d:"#391714"},"7":{l:"#f5a898",d:"#853a2d"},"10":{l:"#dd4425",d:"#ec6142"},"11":{l:"#d13415",d:"#ff977d"},"12":{l:"#5c271f",d:"#fbd3cb"}}
+};
+
+const semColors = {
+  Today:{"100":"CustomTeal/2","200":"CustomTeal/3","300":"CustomTeal/6","400":"CustomTeal/9","500":"CustomTeal/10","550":"CustomTeal/11","600":"CustomTeal/12"},
+  Past:{"100":"Orange/2","200":"Orange/3","300":"Orange/6","400":"Orange/9","500":"Orange/11","600":"Orange/12"},
+  Future:{"100":"Indigo/2","200":"Indigo/3","300":"Indigo/6","400":"Indigo/9","500":"Indigo/11","600":"Indigo/12"},
+  Neutral:{"0":"Slate/0","50":"Slate/1","100":"Slate/2","200":"Slate/3","250":"Slate/4","300":"Slate/7","400":"Slate/8","500":"Slate/9","600":"Slate/10","700":"Slate/11","800":"Slate/12","900":"Slate/13"},
+  Error:{"100":"Red/2","200":"Red/3","300":"Red/6","400":"Red/9","500":"Red/11","600":"Red/12"},
+  Success:{"100":"Jade/2","200":"Jade/3","300":"Jade/6","400":"Jade/9","500":"Jade/11","600":"Jade/12"},
+  Warning:{"100":"Amber/2","200":"Amber/3","300":"Amber/6","400":"Amber/9","500":"Amber/11","600":"Amber/12"},
+  Information:{"100":"Blue/2","200":"Blue/3","300":"Blue/6","400":"Blue/10","500":"Blue/11","600":"Blue/12"},
+  In:{"100":"Grass/2","200":"Grass/3","300":"Grass/7","400":"Grass/10"},
+  Out:{"100":"Tomato/2","200":"Tomato/3","300":"Tomato/7","400":"Tomato/10"}
+};
+
+const mappingData = {
+  Text:{
+    action:"Today/550", headings:"Neutral/800", body:"Neutral/700", tertiary:"Neutral/600",
+    disabled:"Neutral/400", contrast:"Neutral/0", "on-action":"Neutral/0",
+    "in-primary":"In/400", "out-primary":"Out/400", "past-primary":"Past/500",
+    "today-primary":"Today/500","future-primary":"Future/500",
+    error:"Error/500",success:"Success/500",information:"Information/500",warning:"Warning/500"
+  },
+  Surface:{
+    "on-action":"Today/550","action-hover":"Today/600","action-hover-alt":"Today/200",
+    disabled:"Neutral/200","past-primary":"Past/400","past-secondary":"Past/200",
+    "today-primary":"Today/400","today-secondary":"Today/200","today-tertiary":"Today/100",
+    "future-primary":"Future/400","future-secondary":"Future/200",
+    primary:"Neutral/50","primary-bg":"Neutral/250",secondary:"Neutral/100",
+    "tertiary":"Neutral/200",quaternary:"Neutral/300",contrast:"Neutral/900",
+    in:"In/200",out:"Out/200"
+  },
+  Border:{
+    action:"Today/550",disabled:"Neutral/300",primary:"Neutral/600",
+    secondary:"Neutral/400",tertiary:"Neutral/200",
+    "past-primary":"Past/300","today-primary":"Today/300","today-secondary":"Today/200",
+    "future-primary":"Future/300",error:"Error/400",success:"Success/400",
+    information:"Warning/400",warning:"Information/400",in:"In/300",out:"Out/300"
+  },
+  Icon:{
+    action:"Today/550","on-action":"Neutral/0",primary:"Neutral/900",secondary:"Neutral/600",
+    disabled:"Neutral/400","action-hover":"Today/400","past-primary":"Past/400",
+    "today-primary":"Today/500","future-primary":"Future/500",
+    "future-secondary":"Future/400","future-tertiary":"Future/300",
+    error:"Error/500",success:"Success/500",information:"Information/500",warning:"Warning/500",
+    in:"In/400",out:"Out/400"
+  },
+  Overlay:{
+    "dark-lower":"BlackA/1","dark-low":"BlackA/2","dark-medium":"BlackA/4",
+    "dark-high":"BlackA/6","dark-higher":"BlackA/8",
+    "light-lower":"WhiteA/1","light-low":"WhiteA/2","light-medium":"WhiteA/4",
+    "light-high":"WhiteA/6","light-higher":"WhiteA/12"
+  }
+};
+
+const spacingTokens = {"3xs":2,"2xs":4,"xs":8,"sm":12,"md":16,"lg":24,"xl":32,"2xl":48,"3xl":64};
+const respSpacing = {"3xs":{d:2,t:2,m:2},"2xs":{d:4,t:4,m:4},"xs":{d:8,t:8,m:8},"sm":{d:12,t:12,m:12},"md":{d:16,t:16,m:16},"lg":{d:24,t:24,m:12},"xl":{d:32,t:32,m:32},"2xl":{d:48,t:48,m:48},"3xl":{d:64,t:64,m:64}};
+const typeTokens = {h1:{s:60,lh:72},h2:{s:48,lh:56},h3:{s:40,lh:48},h4:{s:32,lh:40},h5:{s:24,lh:28},h6:{s:20,lh:24},"body-lg":{s:20,lh:32},"body-md":{s:16,lh:24},"body-sm":{s:12,lh:20}};
+
+// ═══════════════════════════════════ HELPERS
+function resolveColor(ref) {
+  const [g, s] = ref.split('/');
+  if (primColors[g] && primColors[g][s]) return primColors[g][s][mode.v === 'light' ? 'l' : 'd'];
+  return null;
+}
+function resolveSem(ref) {
+  const [g, s] = ref.split('/');
+  if (semColors[g] && semColors[g][s]) return resolveColor(semColors[g][s]);
+  return resolveColor(ref);
+}
+function resolveMap(ref) {
+  let c = resolveSem(ref);
+  if (!c) c = resolveColor(ref);
+  return c || '#ccc';
+}
+function hexToRgb(h) {
+  if (!h || !h.startsWith('#')) return null;
+  return { r: parseInt(h.slice(1,3),16), g: parseInt(h.slice(3,5),16), b: parseInt(h.slice(5,7),16) };
+}
+function lum(r,g,b) {
+  return [r,g,b].map(v => { v/=255; return v<=0.03928?v/12.92:((v+0.055)/1.055)**2.4; }).reduce((a,v,i)=>a+[0.2126,0.7152,0.0722][i]*v,0);
+}
+function cr(hex1,hex2) {
+  const c1=hexToRgb(hex1),c2=hexToRgb(hex2);
+  if(!c1||!c2)return null;
+  const l1=lum(c1.r,c1.g,c1.b),l2=lum(c2.r,c2.g,c2.b);
+  return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05);
+}
+function badge(ratio){
+  if(!ratio)return'—';
+  const r=ratio.toFixed(1);
+  if(ratio>=7)return`<span class="badge badge-aaa">${r}:1 AAA</span>`;
+  if(ratio>=4.5)return`<span class="badge badge-aa">${r}:1 AA</span>`;
+  return`<span class="badge badge-fail">${r}:1 Fail</span>`;
+}
+function copy(text){
+  navigator.clipboard.writeText(text);
+  const t=document.getElementById('toast');
+  t.textContent='Copied: '+text;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),1400);
+}
+function css(cat,name){return`--gloss-${cat.toLowerCase()}-${name.replace(/([A-Z])/g,'-$1').toLowerCase()}`.replace(/--gloss--/,'--gloss-');}
+function sw(color){ return `<span class="mini-sw" style="background:${color||'#ccc'}"></span>`; }
+
+// ═══════════════════════════════════ PAGES CONFIG
+const pages = {
+  overview: {
+    label:'Overview',
+    tabs:[
+      {id:'arch',label:'Architecture'},
+      {id:'tokens-summary',label:'Token Summary'}
+    ]
+  },
+  naming: {
+    label:'Naming Convention',
+    tabs:[
+      {id:'rules',label:'Rules'},
+      {id:'examples',label:'Examples'}
+    ]
+  },
+  primitives: {
+    label:'Primitive Colors',
+    tabs:[
+      {id:'swatches',label:'All Tokens'},
+      {id:'code-prim',label:'Code'}
+    ]
+  },
+  semantic: {
+    label:'Semantic Colors',
+    tabs:[
+      {id:'sem-swatches',label:'All Tokens'},
+      {id:'sem-code',label:'Code'}
+    ]
+  },
+  mapping: {
+    label:'Mapping Tokens',
+    tabs:[
+      {id:'map-tokens',label:'All Tokens'},
+      {id:'map-a11y',label:'Accessibility'}
+    ]
+  },
+  spacing: {
+    label:'Spacing Scale',
+    tabs:[
+      {id:'sp-scale',label:'Scale'},
+      {id:'sp-code',label:'Code'}
+    ]
+  },
+  typography: {
+    label:'Typography',
+    tabs:[
+      {id:'type-preview',label:'Preview'},
+      {id:'type-specs',label:'Specs'}
+    ]
+  },
+  responsive: {
+    label:'Responsive',
+    tabs:[
+      {id:'resp-spacing',label:'Spacing'},
+      {id:'resp-type',label:'Typography'}
+    ]
+  },
+  accessibility: {
+    label:'Accessibility',
+    tabs:[
+      {id:'a11y-report',label:'Contrast Report'},
+      {id:'a11y-guide',label:'Guidelines'}
+    ]
+  }
+};
+
+// ═══════════════════════════════════ STATE
+let currentPage = 'overview';
+let currentTab = null;
+
+function gotoPage(pageId) {
+  currentPage = pageId;
+  currentTab = pages[pageId].tabs[0].id;
+  updateNav();
+  renderTabbar();
+  renderContent();
+}
+
+function gotoTab(tabId) {
+  currentTab = tabId;
+  renderTabbar();
+  renderContent();
+}
+
+function updateNav() {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('onclick')?.includes(`'${currentPage}'`));
+  });
+}
+
+// ═══════════════════════════════════ RENDER TABBAR
+function renderTabbar() {
+  const page = pages[currentPage];
+  const tabbar = document.getElementById('tabbar');
+  tabbar.innerHTML = page.tabs.map(tab =>
+    `<button class="tab-btn${currentTab===tab.id?' active':''}" onclick="gotoTab('${tab.id}')">${tab.label}</button>`
+  ).join('');
+}
+
+// ═══════════════════════════════════ RENDER CONTENT
+function renderContent() {
+  const el = document.getElementById('content');
+  switch(currentTab) {
+    case 'arch':        el.innerHTML = renderArch(); break;
+    case 'tokens-summary': el.innerHTML = renderSummary(); break;
+    case 'rules':       el.innerHTML = renderNamingRules(); break;
+    case 'examples':    el.innerHTML = renderNamingExamples(); break;
+    case 'swatches':    el.innerHTML = renderPrimSwatches(); break;
+    case 'code-prim':   el.innerHTML = renderPrimCode(); break;
+    case 'sem-swatches':el.innerHTML = renderSemSwatches(); break;
+    case 'sem-code':    el.innerHTML = renderSemCode(); break;
+    case 'map-tokens':  el.innerHTML = renderMappingTokens(); break;
+    case 'map-a11y':    el.innerHTML = renderMappingA11y(); break;
+    case 'sp-scale':    el.innerHTML = renderSpacingScale(); break;
+    case 'sp-code':     el.innerHTML = renderSpacingCode(); break;
+    case 'type-preview':el.innerHTML = renderTypePreview(); break;
+    case 'type-specs':  el.innerHTML = renderTypeSpecs(); break;
+    case 'resp-spacing':el.innerHTML = renderRespSpacing(); break;
+    case 'resp-type':   el.innerHTML = renderRespType(); break;
+    case 'a11y-report': el.innerHTML = renderA11yReport(); break;
+    case 'a11y-guide':  el.innerHTML = renderA11yGuide(); break;
+    default: el.innerHTML = '<p>Coming soon</p>';
+  }
+}
+
+// ═══════════════════════════════════ PAGE RENDERERS
+
+function renderArch(){
+  return `<div class="page-header"><h1>Token Architecture</h1><p>Three-layer system: raw values flow up to semantic intent, then to component usage. Developers only reference the Mapping layer.</p></div>
+  <div class="arch-grid">
+    <div class="arch-card l1"><h4>Layer 1 · Primitives</h4><p>Raw color values, scale numbers, font families. Never used directly in code.</p><div class="code-pill">color/CustomTeal/9 → #00c4c4<br>scale/400 → 16px</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-card l2"><h4>Layer 2 · Semantic</h4><p>Purpose-driven aliases. Answers "what is this for?" not "what color is it?"</p><div class="code-pill">Today/400 → {CustomTeal/9}<br>Error/400 → {Red/9}</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-card l3"><h4>Layer 3 · Mapping</h4><p>Component-level tokens. The only layer developers reference in code.</p><div class="code-pill">Surface/TodayPrimary → {Today/400}<br>Text/error → {Error/500}</div></div>
+  </div>
+  <div class="card"><div class="card-header"><h3>Why Three Layers?</h3></div>
+  <table class="naming-table"><thead><tr><th>Benefit</th><th>How</th></tr></thead><tbody>
+  <tr><td><strong>Theme Switching</strong></td><td>Change only the Primitive layer to switch light/dark — all semantic and mapping tokens update automatically</td></tr>
+  <tr><td><strong>Consistency</strong></td><td>One source of truth per intent. "Today/400" always means the same thing across all components</td></tr>
+  <tr><td><strong>Dev Alignment</strong></td><td>Figma and code use identical token names — no translation layer needed</td></tr>
+  <tr><td><strong>Accessibility</strong></td><td>Contrast ratios are enforced at the mapping layer, ensuring compliant pairings</td></tr>
+  </tbody></table></div>`;
+}
+
+function renderSummary(){
+  const primCount = Object.values(primColors).reduce((a,g)=>a+Object.keys(g).length,0);
+  const semCount = Object.values(semColors).reduce((a,g)=>a+Object.keys(g).length,0);
+  const mapCount = Object.values(mappingData).reduce((a,g)=>a+Object.keys(g).length,0);
+  return `<div class="page-header"><h1>Token Summary</h1><p>All token collections extracted from GLOSS Vault Design System 2.0.</p></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px">
+    ${[['Primitive Colors',primCount,'Raw values (colors, scales, fonts)','#b9bbc6'],
+       ['Semantic Colors',semCount,'Purpose aliases','#00c4c4'],
+       ['Mapping Tokens',mapCount,'Component-level tokens','#5472e4'],
+       ['Responsive',9+9,'Spacing + Typography','#29a383']].map(([n,c,d,col])=>`
+    <div class="card" style="border-top:3px solid ${col};margin:0">
+      <div style="padding:20px">
+        <div style="font-size:32px;font-weight:800;letter-spacing:-0.03em">${c}</div>
+        <div style="font-size:14px;font-weight:700;margin:4px 0">${n}</div>
+        <div style="font-size:12px;color:var(--text-3)">${d}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="card"><div class="card-header"><h3>Collection Breakdown</h3></div>
+  <table class="naming-table"><thead><tr><th>Collection</th><th>Tokens</th><th>Modes</th><th>Types</th></tr></thead><tbody>
+  <tr><td>primitives(brand)</td><td>${primCount}</td><td>Light, Dark</td><td>COLOR, FLOAT, STRING</td></tr>
+  <tr><td>semantic(alias)</td><td>${semCount}</td><td>Value</td><td>COLOR, FLOAT</td></tr>
+  <tr><td>mapping</td><td>${mapCount}</td><td>Mode 1</td><td>COLOR</td></tr>
+  <tr><td>responsive</td><td>36</td><td>Desktop, Tablet, Mobile</td><td>FLOAT</td></tr>
+  </tbody></table></div>`;
+}
+
+function renderNamingRules(){
+  return `<div class="page-header"><h1>Naming Convention</h1><p>Unified rules for Design and Development to stay in sync without any translation layer.</p></div>
+  <div class="card"><div class="card-header"><h3>Conversion Pattern</h3></div>
+  <table class="naming-table"><thead><tr><th>Rule</th><th>Figma Variable</th><th>CSS Custom Property</th></tr></thead><tbody>
+  <tr><td><strong>Prefix</strong></td><td colspan="2">All tokens begin with <code>--gloss-</code> to prevent collision with other libraries</td></tr>
+  <tr><td><strong>Separator</strong></td><td><code>/</code> slash</td><td><code>-</code> hyphen</td></tr>
+  <tr><td><strong>Case</strong></td><td>PascalCase + camelCase</td><td>kebab-case (all lowercase)</td></tr>
+  <tr><td><strong>Spaces</strong></td><td>space in name</td><td>replaced with <code>-</code></td></tr>
+  </tbody></table></div>
+  <div class="card"><div class="card-header"><h3>Which Layer to Use in Code?</h3></div>
+  <table class="naming-table"><thead><tr><th>Layer</th><th>Used By</th><th>Rule</th></tr></thead><tbody>
+  <tr><td><span class="tag">Primitive</span></td><td>Design team only</td><td>❌ Never reference in production code</td></tr>
+  <tr><td><span class="tag">Semantic</span></td><td>Token system internally</td><td>⚠️ Only when no Mapping token exists</td></tr>
+  <tr><td><span class="tag">Mapping</span></td><td>Developers</td><td>✅ Always use — this is the public API</td></tr>
+  </tbody></table></div>`;
+}
+
+function renderNamingExamples(){
+  const examples = [
+    {layer:'Primitive',figma:'color/CustomTeal/9',css:'--gloss-color-custom-teal-9',note:'Raw hex value — internal use only'},
+    {layer:'Primitive',figma:'scale/400',css:'--gloss-scale-400',note:'Raw px value'},
+    {layer:'Semantic',figma:'Today/400',css:'--gloss-today-400',note:'Intent: "the current day\'s primary color"'},
+    {layer:'Semantic',figma:'Error/500',css:'--gloss-error-500',note:'Intent: "error state strong text"'},
+    {layer:'Mapping',figma:'Surface/TodayPrimary',css:'--gloss-surface-today-primary',note:'Use in component backgrounds'},
+    {layer:'Mapping',figma:'Text/headings',css:'--gloss-text-headings',note:'Use in all heading elements'},
+    {layer:'Mapping',figma:'Border/action',css:'--gloss-border-action',note:'Use on interactive border'},
+    {layer:'Mapping',figma:'Icon/disabled',css:'--gloss-icon-disabled',note:'Use on disabled icon fill'},
+    {layer:'Semantic',figma:'border radius/md',css:'--gloss-border-radius-md',note:'6px corner radius'},
+    {layer:'Responsive',figma:'spacing/lg',css:'--gloss-spacing-lg',note:'24px desktop, 12px mobile'},
+  ];
+  return `<div class="page-header"><h1>Naming Examples</h1><p>Real examples from the GLOSS token system showing Figma → CSS conversion.</p></div>
+  <div class="card"><table class="token-table"><thead><tr><th>Layer</th><th>Figma Variable</th><th>CSS Custom Property</th><th>Usage</th></tr></thead><tbody>
+  ${examples.map(e=>`<tr onclick="copy('${e.css}')">
+    <td><span class="tag">${e.layer}</span></td>
+    <td class="mono">${e.figma}</td>
+    <td class="css-var">${e.css}</td>
+    <td class="text-muted" style="font-size:12px">${e.note}</td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function renderPrimSwatches(){
+  let html = `<div class="page-header"><h1>Primitive Colors</h1><p>Raw palette values. Click any swatch to copy its CSS variable. These are the foundation of the entire color system.</p></div><div class="color-palette">`;
+  for(const[group,steps] of Object.entries(primColors)){
+    html+=`<div class="color-group"><div class="color-group-title">${group}<small>${Object.keys(steps).length} steps</small></div>`;
+    for(const[step,vals] of Object.entries(steps)){
+      const col = vals[mode.v==='light'?'l':'d'];
+      const cssVar = `--gloss-color-${group.toLowerCase()}-${step}`;
+      html+=`<div class="color-row" onclick="copy('${cssVar}')">
+        <div class="swatch" style="background:${col}"></div>
+        <span class="color-step">${step}</span>
+        <span class="color-hex">${col}</span>
+      </div>`;
+    }
+    html+='</div>';
+  }
+  html+='</div>';
+  return html;
+}
+
+function renderPrimCode(){
+  let lines = [];
+  for(const[group,steps] of Object.entries(primColors)){
+    lines.push(`/* ${group} */`);
+    for(const[step,vals] of Object.entries(steps)){
+      lines.push(`--gloss-color-${group.toLowerCase()}-${step}: ${vals[mode.v==='light'?'l':'d']};`);
+    }
+    lines.push('');
+  }
+  return `<div class="page-header"><h1>Code · Primitive Colors</h1><p>CSS custom properties for the ${mode.v} theme. Click to copy all.</p></div>
+  <div class="card"><div class="card-header"><h3>CSS Variables (${mode.v})</h3><button onclick="copy(document.getElementById('code-block').textContent)" style="padding:6px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);font-size:12px;cursor:pointer;font-weight:600">Copy All</button></div>
+  <pre id="code-block" style="padding:20px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;overflow-x:auto;white-space:pre;line-height:1.8;color:var(--text-2)">:root {\n  ${lines.join('\n  ')}\n}</pre></div>`;
+}
+
+function renderSemSwatches(){
+  let html = `<div class="page-header"><h1>Semantic Colors</h1><p>Intent-based color aliases. Each token has a semantic meaning, not just a visual value. Click to copy.</p></div><div class="color-palette">`;
+  for(const[group,steps] of Object.entries(semColors)){
+    html+=`<div class="color-group"><div class="color-group-title">${group}<small>${Object.keys(steps).length} steps</small></div>`;
+    for(const[step,ref] of Object.entries(steps)){
+      const col = resolveColor(ref);
+      const cssVar = `--gloss-${group.toLowerCase()}-${step}`;
+      html+=`<div class="color-row" onclick="copy('${cssVar}')">
+        <div class="swatch" style="background:${col||'#ccc'}"></div>
+        <span class="color-step">${step}</span>
+        <span class="color-hex" style="flex-direction:column;gap:2px"><div>${col||'—'}</div><div style="font-size:10px;opacity:0.6">→ ${ref}</div></span>
+      </div>`;
+    }
+    html+='</div>';
+  }
+  return html+'</div>';
+}
+
+function renderSemCode(){
+  let lines = [];
+  for(const[group,steps] of Object.entries(semColors)){
+    lines.push(`/* ${group} */`);
+    for(const[step,ref] of Object.entries(steps)){
+      lines.push(`--gloss-${group.toLowerCase()}-${step}: ${resolveColor(ref)||'/* alias: '+ref+' */'};`);
+    }
+    lines.push('');
+  }
+  return `<div class="page-header"><h1>Code · Semantic Colors</h1></div>
+  <div class="card"><div class="card-header"><h3>CSS Variables</h3><button onclick="copy(document.getElementById('sem-block').textContent)" style="padding:6px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);font-size:12px;cursor:pointer;font-weight:600">Copy All</button></div>
+  <pre id="sem-block" style="padding:20px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;overflow-x:auto;white-space:pre;line-height:1.8;color:var(--text-2)">:root {\n  ${lines.join('\n  ')}\n}</pre></div>`;
+}
+
+function renderMappingTokens(){
+  let html = `<div class="page-header"><h1>Mapping Tokens</h1><p>Component-level tokens — the <strong>only layer developers should reference</strong> in production code. Click any row to copy its CSS variable.</p></div>`;
+  for(const[cat,tokens] of Object.entries(mappingData)){
+    html+=`<p class="section-label">${cat}</p>
+    <div class="card"><table class="token-table"><thead><tr><th>Token</th><th>CSS Variable</th><th>References</th><th>Resolved Value</th></tr></thead><tbody>`;
+    for(const[name,ref] of Object.entries(tokens)){
+      const col = resolveMap(ref);
+      const varName = css(cat,name);
+      html+=`<tr onclick="copy('${varName}')">
+        <td>${sw(col)}<strong class="mono">${cat}/${name}</strong></td>
+        <td class="css-var">${varName}</td>
+        <td class="ref-alias">{${ref}}</td>
+        <td class="mono text-muted">${col}</td>
+      </tr>`;
+    }
+    html+=`</tbody></table></div>`;
+  }
+  return html;
+}
+
+function renderMappingA11y(){
+  const bg = mode.v==='light'?'#fcfcfd':'#111113';
+  const pairs = [
+    {n:'Text/headings on Surface/primary', fg:'Neutral/800', bg:'Neutral/50'},
+    {n:'Text/body on Surface/primary', fg:'Neutral/700', bg:'Neutral/50'},
+    {n:'Text/tertiary on Surface/primary', fg:'Neutral/600', bg:'Neutral/50'},
+    {n:'Text/disabled on Surface/primary', fg:'Neutral/400', bg:'Neutral/50'},
+    {n:'Text/action on Surface/primary', fg:'Today/550', bg:'Neutral/50'},
+    {n:'Text/on-action on Surface/on-action', fg:'Neutral/0', bg:'Today/550'},
+    {n:'Text/error on Surface/primary', fg:'Error/500', bg:'Neutral/50'},
+    {n:'Text/success on Surface/primary', fg:'Success/500', bg:'Neutral/50'},
+    {n:'Text/warning on Surface/primary', fg:'Warning/500', bg:'Neutral/50'},
+    {n:'Text/information on Surface/primary', fg:'Information/500', bg:'Neutral/50'},
+    {n:'Text/today-primary on Surface/today-secondary', fg:'Today/500', bg:'Today/200'},
+    {n:'Text/past-primary on Surface/past-secondary', fg:'Past/500', bg:'Past/200'},
+    {n:'Text/future-primary on Surface/future-secondary', fg:'Future/500', bg:'Future/200'},
+  ];
+  let html = `<div class="page-header"><h1>Accessibility — Contrast Report</h1><p>WCAG 2.1 contrast ratios for standard token pairings. AA requires 4.5:1 for normal text, 3:1 for large text. AAA requires 7:1.</p></div>
+  <div class="card"><table class="token-table"><thead><tr><th>Token Pair</th><th>Foreground</th><th>Background</th><th>Ratio</th><th>Normal text</th><th>Large text</th></tr></thead><tbody>`;
+  for(const p of pairs){
+    const fgCol = resolveSem(p.fg)||resolveColor(p.fg)||'#000';
+    const bgCol = resolveSem(p.bg)||resolveColor(p.bg)||'#fff';
+    const ratio = cr(fgCol,bgCol);
+    const r = ratio?ratio.toFixed(2):null;
+    const normal = ratio>=4.5?'<span class="badge badge-aaa">Pass</span>':'<span class="badge badge-fail">Fail</span>';
+    const large  = ratio>=3  ?'<span class="badge badge-aaa">Pass</span>':'<span class="badge badge-fail">Fail</span>';
+    html+=`<tr><td style="font-weight:500;font-size:12px">${p.n}</td>
+      <td>${sw(fgCol)}<span class="mono" style="font-size:11px">${fgCol}</span></td>
+      <td>${sw(bgCol)}<span class="mono" style="font-size:11px">${bgCol}</span></td>
+      <td><strong>${r?r+':1':'—'}</strong></td>
+      <td>${normal}</td><td>${large}</td></tr>`;
+  }
+  return html+'</tbody></table></div>';
+}
+
+function renderSpacingScale(){
+  const html = `<div class="page-header"><h1>Spacing Scale</h1><p>Base 4px grid. All spacing tokens reference the primitive scale. Click to copy the CSS variable.</p></div>
+  <div class="scale-list">
+  ${Object.entries(spacingTokens).map(([n,v])=>`
+    <div class="scale-row" onclick="copy('--gloss-spacing-${n}')">
+      <span class="scale-name">spacing/${n}</span>
+      <div class="scale-track" style="width:${Math.min((v/64)*100,100)}%"></div>
+      <span class="scale-px">${v}px</span>
+    </div>`).join('')}
+  </div>
+  <div style="margin-top:24px"><p class="section-label">Border Radius</p>
+  <div class="scale-list">
+  ${[['none',0],['sm',4],['md',6],['lg',8],['lger',12],['round',64]].map(([n,v])=>`
+    <div class="scale-row" onclick="copy('--gloss-radius-${n}')">
+      <span class="scale-name">radius/${n}</span>
+      <div class="scale-track" style="width:${Math.min((v/64)*100,100)}%;border-radius:${v}px"></div>
+      <span class="scale-px">${v}px</span>
+    </div>`).join('')}
+  </div></div>`;
+  return html;
+}
+
+function renderSpacingCode(){
+  const lines = Object.entries(spacingTokens).map(([n,v])=>`--gloss-spacing-${n}: ${v}px;`);
+  const radii = [['none',0],['sm',4],['md',6],['lg',8],['lger',12],['round',64]].map(([n,v])=>`--gloss-radius-${n}: ${v}px;`);
+  return `<div class="page-header"><h1>Code · Spacing</h1></div>
+  <div class="card"><div class="card-header"><h3>CSS Variables</h3><button onclick="copy(document.getElementById('sp-block').textContent)" style="padding:6px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);font-size:12px;cursor:pointer;font-weight:600">Copy All</button></div>
+  <pre id="sp-block" style="padding:20px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:1.8;color:var(--text-2)">:root {\n  /* Spacing */\n  ${lines.join('\n  ')}\n\n  /* Border Radius */\n  ${radii.join('\n  ')}\n}</pre></div>`;
+}
+
+function renderTypePreview(){
+  let html = `<div class="page-header"><h1>Typography</h1><p>Montserrat for headings and body, D-DIN-PRO for numbers. All sizes in px.</p></div>
+  <div class="card"><div class="type-rows">`;
+  for(const[name,t] of Object.entries(typeTokens)){
+    const isH = name.startsWith('h');
+    const previewPx = Math.min(t.s,40);
+    html+=`<div class="type-row">
+      <span class="type-token">--gloss-font-size-${name}</span>
+      <span class="type-meta">${t.s}px / ${t.lh}px</span>
+      <span class="type-preview" style="font-size:${previewPx}px;font-weight:${isH?700:400};line-height:1.2;letter-spacing:${isH?'-0.02em':'0'}">The quick brown fox</span>
+    </div>`;
+  }
+  html+=`</div></div>`;
+  return html;
+}
+
+function renderTypeSpecs(){
+  return `<div class="page-header"><h1>Type Specs</h1></div>
+  <div class="card"><table class="token-table"><thead><tr><th>Token</th><th>Size</th><th>Line Height</th><th>Weight</th><th>Font</th></tr></thead><tbody>
+  ${Object.entries(typeTokens).map(([n,t])=>`<tr onclick="copy('--gloss-font-size-${n}')">
+    <td class="mono">--gloss-font-size-${n}</td>
+    <td class="mono">${t.s}px</td>
+    <td class="mono">${t.lh}px</td>
+    <td>${n.startsWith('h')?'700 Bold':'400 Regular'}</td>
+    <td class="text-muted">${n==='number'?'D-DIN-PRO':'Montserrat'}</td>
+  </tr>`).join('')}
+  </tbody></table></div>
+  <div class="card" style="margin-top:16px"><div class="card-header"><h3>Font Families</h3></div>
+  <table class="token-table"><thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead><tbody>
+  <tr onclick="copy('--gloss-font-heading')"><td class="css-var">--gloss-font-heading</td><td class="mono">Montserrat</td><td>H1–H6</td></tr>
+  <tr onclick="copy('--gloss-font-body')"><td class="css-var">--gloss-font-body</td><td class="mono">Montserrat</td><td>Body text, labels, captions</td></tr>
+  <tr onclick="copy('--gloss-font-number')"><td class="css-var">--gloss-font-number</td><td class="mono">D-DIN-PRO</td><td>Numerical data, stats, dates</td></tr>
+  </tbody></table></div>`;
+}
+
+function renderRespSpacing(){
+  return `<div class="page-header"><h1>Responsive Spacing</h1><p>Highlighted cells differ from Desktop. Spacing/lg reduces from 24px to 12px on mobile.</p></div>
+  <div class="card"><table class="token-table"><thead><tr><th>Token</th><th>CSS Variable</th><th>Desktop</th><th>Tablet</th><th>Mobile</th></tr></thead><tbody>
+  ${Object.entries(respSpacing).map(([n,v])=>`<tr onclick="copy('--gloss-spacing-${n}')">
+    <td class="mono">spacing/${n}</td>
+    <td class="css-var">--gloss-spacing-${n}</td>
+    <td class="mono">${v.d}px</td>
+    <td class="mono">${v.t}px</td>
+    <td class="mono">${v.m!==v.d?`<span class="resp-diff">${v.m}px</span>`:`${v.m}px`}</td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function renderRespType(){
+  const rows = [
+    {n:'body-sm',d:12,t:12,m:12,lhd:20,lht:20,lhm:20},
+    {n:'body-md',d:16,t:16,m:16,lhd:24,lht:24,lhm:24},
+    {n:'body-lg',d:20,t:20,m:20,lhd:32,lht:32,lhm:32},
+    {n:'h6',d:20,t:20,m:20,lhd:24,lht:24,lhm:24},
+    {n:'h5',d:24,t:24,m:24,lhd:28,lht:28,lhm:28},
+    {n:'h4',d:32,t:32,m:32,lhd:40,lht:40,lhm:40},
+    {n:'h3',d:40,t:40,m:40,lhd:48,lht:48,lhm:48},
+    {n:'h2',d:48,t:48,m:48,lhd:56,lht:56,lhm:56},
+    {n:'h1',d:60,t:60,m:60,lhd:72,lht:72,lhm:72},
+  ];
+  return `<div class="page-header"><h1>Responsive Typography</h1><p>Font sizes across breakpoints. Currently uniform — all breakpoints share the same type scale.</p></div>
+  <div class="card"><table class="token-table"><thead><tr><th>Token</th><th>Desktop</th><th>Tablet</th><th>Mobile</th><th>Line Height</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td class="mono">fontsize/${r.n}</td><td class="mono">${r.d}px</td><td class="mono">${r.t}px</td><td class="mono">${r.m}px</td><td class="mono text-muted">${r.lhd}px</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function renderA11yReport(){
+  return renderMappingA11y();
+}
+
+function renderA11yGuide(){
+  return `<div class="page-header"><h1>Accessibility Guidelines</h1><p>Rules for using GLOSS tokens accessibly.</p></div>
+  <div class="card"><div class="card-header"><h3>WCAG 2.1 Requirements</h3></div>
+  <table class="naming-table"><thead><tr><th>Level</th><th>Ratio</th><th>Use Case</th></tr></thead><tbody>
+  <tr><td><span class="badge badge-fail">Fail</span></td><td>&lt; 3:1</td><td>Avoid for all text and meaningful UI</td></tr>
+  <tr><td><span class="badge badge-aa">AA Large</span></td><td>3:1</td><td>Large text (18px+ regular, 14px+ bold)</td></tr>
+  <tr><td><span class="badge badge-aa">AA</span></td><td>4.5:1</td><td>Normal body text — minimum requirement</td></tr>
+  <tr><td><span class="badge badge-aaa">AAA</span></td><td>7:1</td><td>Enhanced accessibility — aim for key text</td></tr>
+  </tbody></table></div>
+  <div class="card" style="margin-top:16px"><div class="card-header"><h3>Recommended Token Pairings</h3></div>
+  <table class="naming-table"><thead><tr><th>Use Case</th><th>Foreground</th><th>Background</th></tr></thead><tbody>
+  <tr><td>Primary headings</td><td><code>--gloss-text-headings</code></td><td><code>--gloss-surface-primary</code></td></tr>
+  <tr><td>Body text</td><td><code>--gloss-text-body</code></td><td><code>--gloss-surface-primary</code></td></tr>
+  <tr><td>CTA / Action button</td><td><code>--gloss-text-on-action</code></td><td><code>--gloss-surface-on-action</code></td></tr>
+  <tr><td>Error messages</td><td><code>--gloss-text-error</code></td><td><code>--gloss-surface-primary</code></td></tr>
+  <tr><td>Disabled state</td><td><code>--gloss-text-disabled</code></td><td><code>--gloss-surface-disabled</code></td></tr>
+  <tr><td>Today badge text</td><td><code>--gloss-text-today-primary</code></td><td><code>--gloss-surface-today-secondary</code></td></tr>
+  </tbody></table></div>
+  <div class="card" style="margin-top:16px"><div class="card-header"><h3>Tokens to Avoid for Text</h3></div>
+  <table class="naming-table"><thead><tr><th>Token</th><th>Reason</th></tr></thead><tbody>
+  <tr><td><code>--gloss-text-disabled</code></td><td>Intentionally low contrast — only valid for disabled UI states, never for informational text</td></tr>
+  <tr><td><code>--gloss-text-tertiary</code></td><td>Borderline AA — avoid for long-form body copy, OK for captions and labels</td></tr>
+  <tr><td>Any Primitive token</td><td>Contrast is not guaranteed at the primitive level — always use Mapping tokens</td></tr>
+  </tbody></table></div>`;
+}
+
+// ═══════════════════════════════════ INIT
+function setMode(m){
+  mode.v = m;
+  document.querySelectorAll('.mode-toggle button').forEach(b=>{
+    b.classList.toggle('active', b.textContent.includes(m==='light'?'Light':'Dark'));
+  });
+  renderContent();
+}
+
+gotoPage('overview');
+</script>
+</body>
+</html>
