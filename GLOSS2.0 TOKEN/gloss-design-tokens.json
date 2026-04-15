@@ -4,8 +4,24 @@
     "name": "GLOSS Vault Design System 2.0",
     "version": "2.0.0",
     "source": "Figma — GLOSS Vault Design System 2.0",
-    "exportDate": "2026-04-14",
-    "description": "Three-layer token architecture: Primitives → Semantic → Mapping"
+    "exportDate": "2026-04-15",
+    "description": "Three-layer token architecture: Primitives → Semantic → Mapping + Component patterns",
+    "changelog": {
+      "2.0.1": [
+        "Renamed Surface/primary → Surface/page (Neutral/250)",
+        "Renamed Surface/tertiary → Surface/card (Neutral/200)",
+        "Added Surface/sunken (Neutral/300) and Surface/elevated (Neutral/50)",
+        "Renamed Text/body → Text/secondary",
+        "Fixed Border/information and Border/warning (were swapped)",
+        "Fixed Text/Infromation spelling to Text/information",
+        "Fixed scale/150 Dark value 8 → 6 (matches Light)",
+        "Fixed spacing/lg mobile 12 → 16 (tighter progression)",
+        "Added Selection/* semantic tokens",
+        "Added radius/xl = 12px for desktop cards",
+        "Added elevation/* shadow system tokens",
+        "Added motion/* duration & easing tokens"
+      ]
+    }
   },
 
   "primitives": {
@@ -282,6 +298,14 @@
         "500": { "$value": "{primitives.color.blue.11}", "$type": "color" },
         "600": { "$value": "{primitives.color.blue.12}", "$type": "color" }
       },
+      "selection": {
+        "bg": { "$value": "{primitives.color.slate.3}", "$type": "color", "$description": "Selected item background — neutral tint" },
+        "border": { "$value": "{primitives.color.slate.12}", "$type": "color", "$description": "Selected item border — high contrast neutral" },
+        "text": { "$value": "{primitives.color.slate.12}", "$type": "color", "$description": "Selected item text" },
+        "accent-today": { "$value": "{primitives.color.custom-teal.11}", "$type": "color", "$description": "Selection bar on Today-themed pages" },
+        "accent-past": { "$value": "{primitives.color.orange.11}", "$type": "color", "$description": "Selection bar on Past-themed pages" },
+        "accent-future": { "$value": "{primitives.color.indigo.11}", "$type": "color", "$description": "Selection bar on Future-themed pages" }
+      },
       "elevation": {
         "shadow-dark-50":   { "$value": "{primitives.color.black-a.1}", "$type": "color" },
         "shadow-dark-100":  { "$value": "{primitives.color.black-a.2}", "$type": "color" },
@@ -301,8 +325,27 @@
       "sm":    { "$value": "{primitives.scale.100}", "$type": "dimension" },
       "md":    { "$value": "{primitives.scale.150}", "$type": "dimension" },
       "lg":    { "$value": "{primitives.scale.200}", "$type": "dimension" },
+      "xl":    { "$value": 12, "$type": "dimension", "$description": "Desktop card radius (new in 2.0.1)" },
       "lger":  { "$value": "{primitives.scale.300}", "$type": "dimension" },
       "round": { "$value": "{primitives.scale.1600}", "$type": "dimension" }
+    },
+
+    "elevation": {
+      "$description": "Neumorphic shadow system — dual source light/dark",
+      "card-default": { "$value": "-3px -3px 6px var(--overlay-light-higher), 3px 3px 6px var(--overlay-dark-lower)", "$type": "shadow" },
+      "card-hover":   { "$value": "-5px -5px 10px var(--overlay-light-higher), 5px 5px 10px var(--overlay-dark-low)", "$type": "shadow" },
+      "card-pressed": { "$value": "-1px -1px 3px var(--overlay-light-higher), 1px 1px 3px var(--overlay-dark-lower), inset 1px 1px 2px var(--overlay-dark-lower), inset -1px -1px 2px var(--overlay-light-higher)", "$type": "shadow" },
+      "input-focus":  { "$value": "inset -3px -3px 6px var(--overlay-light-higher), inset 3px 3px 6px var(--overlay-dark-lower)", "$type": "shadow" },
+      "modal":        { "$value": "-6px -6px 12px var(--overlay-light-higher), 6px 6px 12px var(--overlay-dark-medium)", "$type": "shadow" },
+      "tooltip":      { "$value": "-2px -2px 4px var(--overlay-light-higher), 2px 2px 4px var(--overlay-dark-lower)", "$type": "shadow" },
+      "disabled":     { "$value": "none", "$type": "shadow" }
+    },
+
+    "motion": {
+      "fast":   { "$value": { "duration": "150ms", "easing": "ease-out" }, "$type": "motion", "$description": "Button hover, small interactions" },
+      "normal": { "$value": { "duration": "200ms", "easing": "cubic-bezier(0.4, 0, 0.2, 1)" }, "$type": "motion", "$description": "Card hover, panel transitions" },
+      "modal":  { "$value": { "duration": "250ms", "easing": "cubic-bezier(0.2, 0, 0, 1)" }, "$type": "motion", "$description": "Modal enter/exit" },
+      "page":   { "$value": { "duration": "300ms", "easing": "cubic-bezier(0.4, 0, 0.2, 1)" }, "$type": "motion", "$description": "Page theme transition (Past/Today/Future)" }
     },
 
     "border-width": {
@@ -319,7 +362,7 @@
     "text": {
       "action":        { "$value": "{semantic.color.today.550}", "$type": "color" },
       "headings":      { "$value": "{semantic.color.neutral.800}", "$type": "color" },
-      "body":          { "$value": "{semantic.color.neutral.700}", "$type": "color" },
+      "secondary":     { "$value": "{semantic.color.neutral.700}", "$type": "color", "$description": "Renamed from 'body' in 2.0.1" },
       "tertiary":      { "$value": "{semantic.color.neutral.600}", "$type": "color" },
       "disabled":      { "$value": "{semantic.color.neutral.400}", "$type": "color" },
       "contrast":      { "$value": "{semantic.color.neutral.0}", "$type": "color" },
@@ -331,10 +374,14 @@
       "future-primary":{ "$value": "{semantic.color.future.500}", "$type": "color" },
       "error":         { "$value": "{semantic.color.error.500}", "$type": "color" },
       "success":       { "$value": "{semantic.color.success.500}", "$type": "color" },
-      "information":   { "$value": "{semantic.color.information.500}", "$type": "color" },
+      "information":   { "$value": "{semantic.color.information.500}", "$type": "color", "$description": "Fixed spelling from 'Infromation' in 2.0.1" },
       "warning":       { "$value": "{semantic.color.warning.500}", "$type": "color" }
     },
     "surface": {
+      "page":             { "$value": "{semantic.color.neutral.250}", "$type": "color", "$description": "页面底色 (renamed from primary-bg in 2.0.1)" },
+      "card":             { "$value": "{semantic.color.neutral.200}", "$type": "color", "$description": "卡片容器 (renamed from tertiary in 2.0.1)" },
+      "sunken":           { "$value": "{semantic.color.neutral.300}", "$type": "color", "$description": "下陷容器（input 等）(new in 2.0.1)" },
+      "elevated":         { "$value": "{semantic.color.neutral.50}", "$type": "color", "$description": "浮起容器（modal, popover）(new in 2.0.1)" },
       "on-action":        { "$value": "{semantic.color.today.550}", "$type": "color" },
       "action-hover":     { "$value": "{semantic.color.today.600}", "$type": "color" },
       "action-hover-alt": { "$value": "{semantic.color.today.200}", "$type": "color" },
@@ -346,14 +393,18 @@
       "today-tertiary":   { "$value": "{semantic.color.today.100}", "$type": "color" },
       "future-primary":   { "$value": "{semantic.color.future.400}", "$type": "color" },
       "future-secondary": { "$value": "{semantic.color.future.200}", "$type": "color" },
-      "primary":          { "$value": "{semantic.color.neutral.50}", "$type": "color" },
-      "primary-bg":       { "$value": "{semantic.color.neutral.250}", "$type": "color" },
-      "secondary":        { "$value": "{semantic.color.neutral.100}", "$type": "color" },
-      "tertiary":         { "$value": "{semantic.color.neutral.200}", "$type": "color" },
-      "quaternary":       { "$value": "{semantic.color.neutral.300}", "$type": "color" },
       "contrast":         { "$value": "{semantic.color.neutral.900}", "$type": "color" },
       "in":               { "$value": "{semantic.color.in.200}", "$type": "color" },
       "out":              { "$value": "{semantic.color.out.200}", "$type": "color" }
+    },
+    "selection": {
+      "$description": "Selected item states — independent of Past/Today/Future themes",
+      "bg":    { "$value": "{semantic.color.selection.bg}", "$type": "color" },
+      "border":{ "$value": "{semantic.color.selection.border}", "$type": "color" },
+      "text":  { "$value": "{semantic.color.selection.text}", "$type": "color" },
+      "accent-today":  { "$value": "{semantic.color.selection.accent-today}", "$type": "color" },
+      "accent-past":   { "$value": "{semantic.color.selection.accent-past}", "$type": "color" },
+      "accent-future": { "$value": "{semantic.color.selection.accent-future}", "$type": "color" }
     },
     "border": {
       "action":           { "$value": "{semantic.color.today.550}", "$type": "color" },
@@ -367,8 +418,8 @@
       "future-primary":   { "$value": "{semantic.color.future.300}", "$type": "color" },
       "error":            { "$value": "{semantic.color.error.400}", "$type": "color" },
       "success":          { "$value": "{semantic.color.success.400}", "$type": "color" },
-      "information":      { "$value": "{semantic.color.warning.400}", "$type": "color" },
-      "warning":          { "$value": "{semantic.color.information.400}", "$type": "color" },
+      "information":      { "$value": "{semantic.color.information.400}", "$type": "color", "$description": "Fixed swap with warning in 2.0.1" },
+      "warning":          { "$value": "{semantic.color.warning.400}", "$type": "color", "$description": "Fixed swap with information in 2.0.1" },
       "in":               { "$value": "{semantic.color.in.300}", "$type": "color" },
       "out":              { "$value": "{semantic.color.out.300}", "$type": "color" }
     },
@@ -415,7 +466,7 @@
       "xs":  { "$value": { "desktop": 8,  "tablet": 8,  "mobile": 8  }, "$type": "dimension" },
       "sm":  { "$value": { "desktop": 12, "tablet": 12, "mobile": 12 }, "$type": "dimension" },
       "md":  { "$value": { "desktop": 16, "tablet": 16, "mobile": 16 }, "$type": "dimension" },
-      "lg":  { "$value": { "desktop": 24, "tablet": 24, "mobile": 12 }, "$type": "dimension" },
+      "lg":  { "$value": { "desktop": 24, "tablet": 24, "mobile": 16 }, "$type": "dimension", "$description": "Mobile value changed 12 → 16 in 2.0.1 (smoother progression)" },
       "xl":  { "$value": { "desktop": 32, "tablet": 32, "mobile": 32 }, "$type": "dimension" },
       "2xl": { "$value": { "desktop": 48, "tablet": 48, "mobile": 48 }, "$type": "dimension" },
       "3xl": { "$value": { "desktop": 64, "tablet": 64, "mobile": 64 }, "$type": "dimension" }
